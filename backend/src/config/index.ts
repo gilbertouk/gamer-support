@@ -13,4 +13,11 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || "development",
   debug: process.env.DEBUG === "true" || false,
   version: "1.0.0",
+  token: {
+    secret: process.env.TOKEN_SECRET || "your-secret-key",
+    expiresIn: process.env.TOKEN_EXPIRES_IN || "15m",
+    refreshSecret: process.env.REFRESH_TOKEN_SECRET || "your-refresh-secret-key",
+    refreshExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d",
+    issuer: process.env.TOKEN_ISSUER || "your-app-name",
+  },
 };

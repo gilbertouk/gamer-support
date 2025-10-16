@@ -1,0 +1,12 @@
+# API URL
+@apiUrl = http://localhost:5000/api
+
+### User Sign Up
+POST {{apiUrl}}/v1/auth/sign-up
+Content-Type: application/json
+
+{
+  "username": "user-01",
+  "email": "user-01@example.com",
+  "password": "password123"
+}
