@@ -1,0 +1,5 @@
+# API URL
+@apiUrl = http://localhost:5000
+
+### Health Check
+GET {{apiUrl}}/health
