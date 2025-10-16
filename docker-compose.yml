@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gamer_support_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    # networks:
+    #   - backend
+
+  # backend:
+  #   build: ./backend
+  #   environment:
+  #     DATABASE_URL: postgres://postgres:example@db:5432/gamer_support
+  #     PORT: 4000
+  #   ports:
+  #     - "4000:4000"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - backend
+
+volumes:
+  db_data:
