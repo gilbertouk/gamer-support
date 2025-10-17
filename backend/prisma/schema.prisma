@@ -19,6 +19,7 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  role      UserRole @default(USER)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -84,4 +85,9 @@ enum UrgencyLevel {
   MODERADO
   AGORA
   APAGA_O_SERVIDOR
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
