@@ -1,13 +1,18 @@
 # =========================
 # Etapa 1: build do backend
 # =========================
-FROM node:22-alpine AS backend-builder
+FROM node:20-alpine AS backend-builder
 WORKDIR /app/backend
 
 COPY backend/package*.json ./
-RUN npm install
+RUN npm ci --include=dev
 
 COPY backend ./
+
+# Gera o Prisma Client antes de compilar
+RUN npx prisma generate
+
+# Agora sim compila o projeto
 RUN npm run build
 
 
@@ -35,9 +40,11 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Copia backend compilado
-COPY --from=backend-builder /app/backend/dist ./backend/dist
-COPY --from=backend-builder /app/backend/package*.json ./backend/
-COPY --from=backend-builder /app/backend/prisma ./backend/prisma
+# COPY --from=backend-builder /app/backend/dist ./backend/dist
+# COPY --from=backend-builder /app/backend/package*.json ./backend/
+# COPY --from=backend-builder /app/backend/prisma ./backend/prisma
+# Copia backend compilado e prisma client já gerado
+COPY --from=backend-builder /app/backend ./backend
 
 # Copia frontend compilado
 COPY --from=frontend-builder /app/frontend/.next ./frontend/.next
@@ -46,14 +53,6 @@ COPY --from=frontend-builder /app/frontend/package*.json ./frontend/
 
 # Instala dependências necessárias para produção
 RUN cd backend && npm ci --omit=dev && cd ../frontend && npm ci --omit=dev
-
-# =========================
-# Prisma setup (importante)
-# =========================
-WORKDIR /app/backend
-
-# Gera o Prisma Client (não precisa do node_modules global)
-RUN npx prisma generate
 
 # =========================
 # Configuração final
