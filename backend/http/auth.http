@@ -37,4 +37,3 @@ Cookie: refreshToken={{refreshToken}}
 
 ### Refresh Access Token
 GET {{apiUrl}}/v1/auth/refresh-token
-Cookie: refreshToken={{refreshToken}}
