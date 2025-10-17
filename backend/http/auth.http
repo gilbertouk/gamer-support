@@ -2,10 +2,10 @@
 @apiUrl = http://localhost:5000/api
 
 # Access Token
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3V6MnV5bjAwMDJyb25tbWl3dTA4anQiLCJlbWFpbCI6InVzZXItMDJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjA3MTMwNDksImV4cCI6MTc2MDcxMzk0OSwiaXNzIjoiZ2FtZXItc3VwcG9ydC1hcHAifQ.N1F0rTSlyOnzR-_6A2jfzOazkvgRffRIKcb7hVHQ7Dw
+@accessToken = <your_access_token_here>
 
 # Cookie: Refresh Token
-@refreshToken = refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3V6MnV5bjAwMDJyb25tbWl3dTA4anQiLCJlbWFpbCI6InVzZXItMDJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NjA3MTMyMjcsImV4cCI6MTc2MTMxODAyNywiaXNzIjoiZ2FtZXItc3VwcG9ydC1hcHAiLCJqdGkiOiJmYjNiNWVlMC00NGRjLTQyMDQtYWUyYS0wMDYyMzEzYzI3ZmQifQ.puHqQwpxIlXfzOCbik3fl5nNnD5EG0-lVnoWf70Jmkk; Max-Age=604800; Path=/; Expires=Fri, 24 Oct 2025 15:00:27 GMT; HttpOnly; Secure; SameSite=Lax
+@refreshToken = <your_refresh_token_here>
 
 ### User Sign Up
 POST {{apiUrl}}/v1/auth/sign-up
