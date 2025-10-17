@@ -1,12 +1,12 @@
 /*
  * Custom Modules
  */
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 /*
  * types
  */
-import type { User as UserPrisma, Ticket as TicketPrisma, Comment as CommentPrisma } from "../generated/prisma";
+import type { User as UserPrisma, Ticket as TicketPrisma, Comment as CommentPrisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
