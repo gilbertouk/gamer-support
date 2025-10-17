@@ -9,7 +9,7 @@ import database from "./prisma";
  * Types
  */
 import type { ITicketRepository } from "./interfaces";
-import type { TicketPrisma, CommentPrisma } from "./prisma";
+import type { TicketPrisma } from "./prisma";
 import type { CreateTicketDTO } from "../controllers/ticket.controller";
 
 export class TicketRepository implements ITicketRepository {
@@ -47,7 +47,11 @@ export class TicketRepository implements ITicketRepository {
   async getTicketComments(ticketId: string): Promise<CommentModel[]> {
     const comments = await database.comment.findMany({
       where: { ticketId },
+      include: { user: true },
+      orderBy: { createdAt: "asc" },
     });
+
+    console.log(comments);
 
     return comments.map((comment) => this.mapperToComment(comment));
   }
@@ -96,7 +100,10 @@ export class TicketRepository implements ITicketRepository {
     );
   }
 
-  private mapperToComment(comment: CommentPrisma): CommentModel {
-    return CommentModel.create(comment.id, comment.message, comment.createdAt);
+  private mapperToComment(comment: { id: string; message: string; createdAt: Date; user?: { username?: string; role?: string } }): CommentModel {
+    const author = comment?.user?.username || "Usuário deletado";
+    const isAdmin = comment?.user?.role === "ADMIN" || false;
+
+    return CommentModel.create(comment.id, comment.message, author, isAdmin, comment.createdAt);
   }
 }

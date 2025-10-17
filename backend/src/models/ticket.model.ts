@@ -4,7 +4,7 @@
 import type { CommentModel } from "./comment.model";
 
 export type URGENCY = "SUAVE" | "MODERADO" | "AGORA" | "APAGA_O_SERVIDOR";
-export type STATUS = "ABERTO" | "RESOLVIDO" | "IGNORADO";
+export type STATUS = "ABERTO" | "EM_PROGRESSO" | "RESOLVIDO" | "IGNORADO";
 
 export class TicketModel {
   private id: string;

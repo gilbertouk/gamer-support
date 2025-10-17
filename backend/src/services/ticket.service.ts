@@ -23,7 +23,15 @@ export class TicketService implements ITicketService {
   }
 
   async getById(id: string): Promise<TicketModel | null> {
-    return await this.ticketRepository.getById(id);
+    const ticket = await this.ticketRepository.getById(id);
+    if (!ticket) {
+      return null;
+    }
+
+    const comments = await this.ticketRepository.getTicketComments(id);
+    ticket.setComments(comments);
+
+    return ticket;
   }
 
   async getAll(): Promise<TicketModel[]> {

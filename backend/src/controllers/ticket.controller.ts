@@ -97,6 +97,8 @@ export class TicketController {
         comments: ticket.getComments().map((comment) => ({
           id: comment.getId(),
           message: comment.getMessage(),
+          author: comment.getAuthor(),
+          isAdmin: comment.getIsAdmin(),
           createdAt: comment.getCreatedAt(),
         })),
       },
