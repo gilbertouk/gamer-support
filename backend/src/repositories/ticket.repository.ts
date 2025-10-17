@@ -51,8 +51,6 @@ export class TicketRepository implements ITicketRepository {
       orderBy: { createdAt: "asc" },
     });
 
-    console.log(comments);
-
     return comments.map((comment) => this.mapperToComment(comment));
   }
 
