@@ -2,10 +2,10 @@
 @apiUrl = http://localhost:5000/api
 
 #ticket ID
-@ticketId = cmgv1fgjp0005roprsbt0glra
+@ticketId = <your_ticket_id_here>
 
 # Access Token
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3V6MnV5bjAwMDJyb25tbWl3dTA4anQiLCJlbWFpbCI6InVzZXItMDJAZXhhbXBsZS5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc2MDcyMDA3MSwiZXhwIjoxNzYwNzIwOTcxLCJpc3MiOiJnYW1lci1zdXBwb3J0LWFwcCJ9.xy15KOnwoFvLfwEI2A-NJMAq-dpURbj9G_XbKCEhduw
+@accessToken = <your_access_token_here>
 
 ### Create Ticket
 POST {{apiUrl}}/v1/tickets
