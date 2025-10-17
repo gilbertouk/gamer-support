@@ -71,6 +71,6 @@ export class UserRepository implements IUserRepository {
   }
 
   private mapperToModel(user: UserPrisma): UserModel {
-    return UserModel.create(user.id, user.username, user.email, user.password, user.createdAt, user.updatedAt);
+    return UserModel.create(user.id, user.username, user.email, user.password, user.role, user.createdAt, user.updatedAt);
   }
 }

@@ -6,7 +6,7 @@ import type { ITokenService } from "../services/interfaces";
 import type { IUserRepository } from "../repositories/interfaces";
 
 export interface AuthenticatedRequest extends Request {
-  user: { id: string; email: string };
+  user: { id: string; email: string; role: string };
 }
 
 // Helper para type casting
@@ -36,29 +36,43 @@ export class AuthMiddleware {
         const token = req.headers.authorization!.split(" ")[1];
         const payload = this.tokenService.verifyToken(token);
 
-        if (!payload || typeof payload === "string" || !payload.id || !payload.email) {
+        if (!payload || typeof payload === "string" || !payload.id || !payload.email || !payload.role) {
           throw new Error("Unauthorized");
         }
-
-        console.log("JWT Payload:", payload);
 
         const user = await this.userRepository.findById(payload.id);
         if (!user) {
           throw new Error("Unauthorized");
         }
 
-        console.log("User on Middleware:", user);
-
         // Attach user to request object
         (req as AuthenticatedRequest).user = {
           id: user.getId(),
           email: user.getEmail(),
+          role: user.getRole(),
         };
 
         next();
       } catch (error) {
         next(error);
       }
+    };
+  }
+
+  requireRole(allowedRoles: string[]) {
+    return (req: Request, res: Response, next: NextFunction): void => {
+      const authenticatedReq = req as AuthenticatedRequest;
+
+      if (!authenticatedReq.user) {
+        throw new Error("Unauthorized");
+      }
+
+      if (!allowedRoles.includes(authenticatedReq.user.role)) {
+        next(new Error("Forbidden"));
+        return;
+      }
+
+      next();
     };
   }
 }

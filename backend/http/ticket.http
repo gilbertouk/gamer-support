@@ -1,0 +1,40 @@
+# API URL
+@apiUrl = http://localhost:5000/api
+
+#ticket ID
+@ticketId = cmgv1fgjp0005roprsbt0glra
+
+# Access Token
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3V6MnV5bjAwMDJyb25tbWl3dTA4anQiLCJlbWFpbCI6InVzZXItMDJAZXhhbXBsZS5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc2MDcyMDA3MSwiZXhwIjoxNzYwNzIwOTcxLCJpc3MiOiJnYW1lci1zdXBwb3J0LWFwcCJ9.xy15KOnwoFvLfwEI2A-NJMAq-dpURbj9G_XbKCEhduw
+
+### Create Ticket
+POST {{apiUrl}}/v1/tickets
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Issue with Game X",
+  "game": "Game X",
+  "description": "I'm experiencing crashes when I try to launch Game X.",
+  "urgency": "SUAVE",
+  "status": "ABERTO"
+}
+
+### Get Ticket by ID
+GET {{apiUrl}}/v1/tickets/{{ticketId}}
+
+### Get All Tickets
+GET {{apiUrl}}/v1/tickets
+
+### Add Comment to Ticket
+PUT {{apiUrl}}/v1/tickets/{{ticketId}}/comments
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "message": "I'm experiencing crashes when I try to launch Game X."
+}
+
+### Delete Ticket
+DELETE {{apiUrl}}/v1/tickets/{{ticketId}}
+Authorization: Bearer {{accessToken}}

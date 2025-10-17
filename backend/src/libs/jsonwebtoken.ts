@@ -14,11 +14,13 @@ import { config } from "../config";
  * Types
  */
 import type { SignOptions } from "jsonwebtoken";
-import { ITokenRepository } from "../repositories/interfaces";
+import type { ITokenRepository } from "../repositories/interfaces";
+import type { USER_ROLE } from "../models/user.model";
 
 interface JwtPayload {
   id: string;
   email: string;
+  role: USER_ROLE;
 }
 
 export class TokenService implements ITokenService {

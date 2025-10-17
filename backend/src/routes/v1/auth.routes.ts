@@ -115,7 +115,7 @@ router.get("/refresh-token", async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const newAccessToken = tokenService.generateToken({ id: payload.id, email: payload.email });
+  const newAccessToken = tokenService.generateToken({ id: payload.id, email: payload.email, role: payload.role });
 
   return res.status(200).json({
     status: 200,

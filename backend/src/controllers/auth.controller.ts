@@ -1,8 +1,4 @@
 /*
- * Custom Modules
- */
-
-/*
  * Types
  */
 import type { IAuthService, ITokenService } from "../services/interfaces";
@@ -49,8 +45,8 @@ export class AuthController {
       return null;
     }
 
-    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail() });
-    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail() });
+    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail(), role: user.getRole() });
+    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail(), role: user.getRole() });
 
     await this.tokenService.saveToken(user.getId(), refreshToken);
 
@@ -77,8 +73,8 @@ export class AuthController {
       return null;
     }
 
-    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail() });
-    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail() });
+    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail(), role: user.getRole() });
+    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail(), role: user.getRole() });
 
     await this.tokenService.saveToken(user.getId(), refreshToken);
 
