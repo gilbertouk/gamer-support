@@ -18,15 +18,16 @@ import {
   User,
   AlertCircle,
   CheckCircle,
-  // Clock,
+  Clock,
   Skull,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { API_CONFIG } from "@/lib/api-config";
 
 type TicketStatus = "open" | "in-progress" | "resolved" | "ignored";
-type ApiTicketStatus = "ABERTO" | "RESOLVIDO" | "IGNORADO";
+type ApiTicketStatus = "ABERTO" | "RESOLVIDO" | "IGNORADO" | "EM_PROGRESSO";
 type ApiTicketUrgency = "SUAVE" | "MODERADO" | "AGORA" | "APAGA_O_SERVIDOR";
 
 interface Ticket {
@@ -34,7 +35,7 @@ interface Ticket {
   title: string;
   description: string;
   status: TicketStatus;
-  priority: "low" | "medium" | "high";
+  priority: "low" | "medium" | "high" | "urgent";
   createdAt: string;
   updatedAt: string;
   userId: string;
@@ -59,11 +60,11 @@ const statusConfig = {
     icon: AlertCircle,
     color: "bg-accent/10 text-accent border-accent/20",
   },
-  // "in-progress": {
-  //   label: "Em Progresso",
-  //   icon: Clock,
-  //   color: "bg-secondary/10 text-secondary border-secondary/20",
-  // },
+  "in-progress": {
+    label: "Em Progresso",
+    icon: Clock,
+    color: "bg-secondary/10 text-secondary border-secondary/20",
+  },
   resolved: {
     label: "Resolvido",
     icon: CheckCircle,
@@ -79,14 +80,15 @@ const statusConfig = {
 const priorityConfig = {
   low: { label: "Baixa", color: "bg-muted text-muted-foreground" },
   medium: { label: "Média", color: "bg-secondary/20 text-secondary" },
-  high: { label: "Alta", color: "bg-destructive/20 text-destructive" },
+  high: { label: "Alta", color: "bg-destructive/20 text-orange-500" },
+  urgent: { label: "Urgente", color: "bg-destructive/20 text-destructive" },
 };
 
 // Mapping functions for API data
 const mapApiStatusToLocal = (apiStatus: ApiTicketStatus): TicketStatus => {
   const statusMap = {
     ABERTO: "open" as const,
-    // EM_PROGRESSO: "in-progress" as const,
+    EM_PROGRESSO: "in-progress" as const,
     RESOLVIDO: "resolved" as const,
     IGNORADO: "ignored" as const,
   };
@@ -95,12 +97,12 @@ const mapApiStatusToLocal = (apiStatus: ApiTicketStatus): TicketStatus => {
 
 const mapApiUrgencyToPriority = (
   urgency: ApiTicketUrgency
-): "low" | "medium" | "high" => {
+): "low" | "medium" | "high" | "urgent" => {
   const urgencyMap = {
     SUAVE: "low" as const,
     MODERADO: "medium" as const,
     AGORA: "high" as const,
-    APAGA_O_SERVIDOR: "high" as const,
+    APAGA_O_SERVIDOR: "urgent" as const,
   };
   return urgencyMap[urgency] || "low";
 };
@@ -118,9 +120,11 @@ const transformApiTicket = (apiTicket: ApiTicket): Ticket => ({
 });
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    username: string;
+  } | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(true);
   const [ticketsError, setTicketsError] = useState<string | null>(null);
@@ -133,7 +137,7 @@ export default function DashboardPage() {
 
       const accessToken = localStorage.getItem("accessToken");
 
-      const response = await fetch("http://localhost:5000/api/v1/tickets", {
+      const response = await fetch(API_CONFIG.ENDPOINTS.TICKETS.LIST, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -239,7 +243,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex items-center gap-2 text-sm">
                 <User className="w-4 h-4 text-muted-foreground" />
-                <span className="text-foreground">{user.name}</span>
+                <span className="text-foreground">{user.username}</span>
               </div>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
@@ -259,11 +263,13 @@ export default function DashboardPage() {
           className="mb-8"
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            Olá, <span className="text-primary glow-primary">{user.name}</span>!
+            Olá,{" "}
+            <span className="text-primary glow-primary">{user.username}</span>!
             👋
           </h1>
           <p className="text-muted-foreground text-lg">
-            Aqui estão seus tickets de suporte (ou desespero)
+            Aqui estão todos os tickets de suporte (ou desespero), incluindo os
+            seus!
           </p>
         </motion.div>
 
@@ -313,7 +319,7 @@ export default function DashboardPage() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="flex items-center justify-between mb-6"
         >
-          <h2 className="text-2xl font-bold">Meus Tickets</h2>
+          <h2 className="text-2xl font-bold">Tickets</h2>
           <Button asChild className="border-glow">
             <Link href="/dashboard/new">
               <Plus className="w-4 h-4 mr-2" />
@@ -393,14 +399,12 @@ export default function DashboardPage() {
                               {ticket.description}
                             </p>
                             <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>#{ticket.id}</span>
+                              <span>@{user.username}</span>
                               <span>•</span>
-                              {ticket.game && (
-                                <>
-                                  <span>{ticket.game}</span>
-                                  <span>•</span>
-                                </>
-                              )}
+                              {/* <span>#{ticket.id}</span>
+                              <span>•</span> */}
+                              <span>{ticket.game}</span>
+                              <span>•</span>
                               <span>{getTimeAgo(ticket.createdAt)}</span>
                             </div>
                           </div>

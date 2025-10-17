@@ -21,42 +21,24 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { API_CONFIG } from "@/lib/api-config";
 
-export default function SignupPage() {
-  const [name, setName] = useState("");
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !email || !password || !confirmPassword) {
-      toast("Erro!", {
-        description: "Por favor, preencha todos os campos.",
-      });
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast("Erro!", {
-        description: "As senhas não coincidem. Tenta de novo, campeão! 🎯",
-      });
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      // Call the signup API
-      const response = await fetch(API_CONFIG.ENDPOINTS.AUTH.SIGN_UP, {
+      // Call the sign-in API
+      const response = await fetch(API_CONFIG.ENDPOINTS.AUTH.SIGN_IN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: name,
           email,
           password,
         }),
@@ -65,7 +47,7 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Erro ao criar conta");
+        throw new Error(data.message || "Erro ao fazer login");
       }
 
       // Store user data and token in localStorage
@@ -73,17 +55,14 @@ export default function SignupPage() {
       localStorage.setItem("accessToken", data.meta.accessToken);
       localStorage.setItem("isAuthenticated", "true");
 
-      toast("Conta criada!", {
-        description: "Bem-vindo à galera! Agora pode reclamar à vontade 🎮",
+      toast("Login realizado!", {
+        description: "Bem-vindo de volta, gamer! 🎮",
       });
 
       router.push("/dashboard");
     } catch (error) {
       toast("Erro!", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "Erro ao criar conta. Tenta de novo! 😅",
+        description: error instanceof Error ? error.message : "Erro ao fazer login. Tente novamente! 😅",
       });
     } finally {
       setIsLoading(false);
@@ -101,7 +80,7 @@ export default function SignupPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <Card className="border-2 border-secondary/20">
+        <Card className="border-2 border-primary/20">
           <CardHeader className="space-y-4">
             <motion.div
               initial={{ scale: 0 }}
@@ -109,35 +88,20 @@ export default function SignupPage() {
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="flex justify-center"
             >
-              <Gamepad2 className="w-12 h-12 text-secondary glow-secondary" />
+              <Gamepad2 className="w-12 h-12 text-primary glow-primary" />
             </motion.div>
             <div className="text-center space-y-2">
               <CardTitle className="text-3xl font-bold">
-                <span className="glow-secondary text-secondary">
-                  Criar Conta
-                </span>
+                <span className="glow-primary text-primary">Login</span>
               </CardTitle>
               <CardDescription className="text-base">
-                Junte-se à galera e comece a reclamar!
+                Entre para abrir tickets e reclamar do lag
               </CardDescription>
             </div>
           </CardHeader>
 
-          <form onSubmit={handleSignup}>
+          <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Username</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Seu username"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="bg-muted/50"
-                />
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -164,22 +128,8 @@ export default function SignupPage() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="bg-muted/50"
-                />
-              </div>
-
               <p className="text-xs text-muted-foreground italic">
-                Ao criar uma conta, você concorda em esperar horas por uma
-                resposta 😴
+                Esqueceu a senha? Boa sorte, o admin não responde emails 😅
               </p>
             </CardContent>
 
@@ -193,20 +143,20 @@ export default function SignupPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Criando conta...
+                    Entrando...
                   </>
                 ) : (
-                  "Criar Conta"
+                  "Entrar"
                 )}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">
-                Já tem conta?{" "}
+                Não tem conta?{" "}
                 <Link
-                  href="/login"
-                  className="text-secondary hover:underline font-semibold"
+                  href="/signup"
+                  className="text-primary hover:underline font-semibold"
                 >
-                  Fazer login
+                  Criar conta
                 </Link>
               </div>
 
@@ -226,8 +176,7 @@ export default function SignupPage() {
           transition={{ delay: 0.6 }}
           className="text-center text-xs text-muted-foreground mt-4 italic"
         >
-          Prometo que não vamos vender seus dados... porque nem temos onde
-          guardar 🤷
+          Dica: qualquer email e senha funcionam... é só pra zoar mesmo 🤡
         </motion.p>
       </motion.div>
     </div>
