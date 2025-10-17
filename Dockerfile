@@ -47,6 +47,17 @@ COPY --from=frontend-builder /app/frontend/package*.json ./frontend/
 # Instala dependências necessárias para produção
 RUN cd backend && npm ci --omit=dev && cd ../frontend && npm ci --omit=dev
 
+# =========================
+# Prisma setup (importante)
+# =========================
+WORKDIR /app/backend
+
+# Gera o Prisma Client (não precisa do node_modules global)
+RUN npx prisma generate
+
+# =========================
+# Configuração final
+# =========================
 # Variáveis de ambiente (você também pode definir via Coolify)
 ENV NODE_ENV=production
 ENV PORT=5000
@@ -55,7 +66,9 @@ ENV NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 # Expõe apenas o frontend (Next.js)
 EXPOSE 3000
 
-# Script de inicialização — inicia backend e frontend juntos
+# Executa migrations e inicia backend + frontend juntos
 CMD \
-  (cd /app/backend && node dist/index.js &) && \
-  (cd /app/frontend && npm start)
+  echo "🏗️  Executando migrations..." && \
+  cd /app/backend && npx prisma migrate deploy && \
+  echo "🚀 Iniciando backend..." && node dist/index.js & \
+  echo "🎮 Iniciando frontend..." && cd /app/frontend && npm start
