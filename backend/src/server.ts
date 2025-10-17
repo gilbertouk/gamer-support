@@ -10,13 +10,13 @@ import cookieParser from "cookie-parser";
  * Custom Modules
  */
 import { config } from "./config";
-// routes
+import { errorHandler } from "./middleware/error.middleware";
 import v1 from "./routes/v1";
 
 /*
  * Types
  */
-import type { Application, NextFunction, Request, Response } from "express";
+import type { Application, Request, Response } from "express";
 
 const app: Application = express();
 
@@ -41,17 +41,6 @@ app.get("/api/health", (req: Request, res: Response) => {
 });
 
 app.use("/api", v1);
-
 app.use(errorHandler);
-
-function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
-  if (res.headersSent) {
-    return next(err);
-  }
-
-  console.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
-  return;
-}
 
 export default app;

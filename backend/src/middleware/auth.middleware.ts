@@ -1,7 +1,7 @@
 /*
  * Types
  */
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { ITokenService } from "../services/interfaces";
 import type { IUserRepository } from "../repositories/interfaces";
 
