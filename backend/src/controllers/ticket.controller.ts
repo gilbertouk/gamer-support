@@ -16,6 +16,7 @@ export interface CreateTicketDTO {
 
 export interface CreatedTicket {
   id: string;
+  userId: string;
   title: string;
   game: string;
   description: string;
@@ -27,6 +28,7 @@ export interface CreatedTicket {
 
 export interface Ticket {
   id: string;
+  userId: string;
   title: string;
   game: string;
   description: string;
@@ -61,6 +63,7 @@ export class TicketController {
       message: "Ticket created successfully",
       data: {
         id: createdTicket.getId(),
+        userId: createdTicket.getUserId(),
         title: createdTicket.getTitle(),
         game: createdTicket.getGame(),
         description: createdTicket.getDescription(),
@@ -83,6 +86,7 @@ export class TicketController {
       message: "Ticket retrieved successfully",
       data: {
         id: ticket.getId(),
+        userId: ticket.getUserId(),
         title: ticket.getTitle(),
         game: ticket.getGame(),
         description: ticket.getDescription(),
@@ -107,6 +111,7 @@ export class TicketController {
       message: "Tickets retrieved successfully",
       data: tickets.map((ticket) => ({
         id: ticket.getId(),
+        userId: ticket.getUserId(),
         title: ticket.getTitle(),
         game: ticket.getGame(),
         description: ticket.getDescription(),
