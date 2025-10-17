@@ -4,6 +4,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 /*
  * Custom Modules
@@ -23,6 +24,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get("/api/health", (req: Request, res: Response) => {
   res.json({
@@ -40,10 +42,16 @@ app.get("/api/health", (req: Request, res: Response) => {
 
 app.use("/api", v1);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use(errorHandler);
+
+function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
+  if (res.headersSent) {
+    return next(err);
+  }
+
   console.error(err.stack);
   res.status(500).json({ message: "Internal Server Error" });
-});
+  return;
+}
 
 export default app;

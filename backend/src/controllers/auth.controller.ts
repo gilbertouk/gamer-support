@@ -21,6 +21,18 @@ export interface UserCreated {
   createdAt: Date;
 }
 
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: Date;
+}
+
+export interface UserSignedInDTO {
+  email: string;
+  password: string;
+}
+
 export class AuthController {
   private authService: IAuthService;
   private tokenService: ITokenService;
@@ -37,8 +49,8 @@ export class AuthController {
       return null;
     }
 
-    const accessToken = this.tokenService.generateToken({ id: user.getId() });
-    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId() });
+    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail() });
+    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail() });
 
     await this.tokenService.saveToken(user.getId(), refreshToken);
 
@@ -54,6 +66,53 @@ export class AuthController {
       meta: {
         accessToken,
         refreshToken,
+      },
+    };
+  }
+
+  async signIn(input: UserSignedInDTO): Promise<IResponse<User> | null> {
+    const user = await this.authService.signIn(input);
+
+    if (!user) {
+      return null;
+    }
+
+    const accessToken = this.tokenService.generateToken({ id: user.getId(), email: user.getEmail() });
+    const refreshToken = this.tokenService.generateRefreshToken({ id: user.getId(), email: user.getEmail() });
+
+    await this.tokenService.saveToken(user.getId(), refreshToken);
+
+    return {
+      status: 200,
+      message: "User signed in successfully",
+      data: {
+        id: user.getId(),
+        username: user.getUsername(),
+        email: user.getEmail(),
+        createdAt: user.getCreatedAt(),
+      },
+      meta: {
+        accessToken,
+        refreshToken,
+      },
+    };
+  }
+
+  async me(userId: string): Promise<IResponse<User> | null> {
+    const user = await this.authService.me(userId);
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      status: 200,
+      message: "User signed in successfully",
+      data: {
+        id: user.getId(),
+        username: user.getUsername(),
+        email: user.getEmail(),
+        createdAt: user.getCreatedAt(),
       },
     };
   }

@@ -28,6 +28,20 @@ export class UserRepository implements IUserRepository {
     return this.mapperToModel(user);
   }
 
+  async findById(id: string): Promise<UserModel | null> {
+    const user = await database.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.mapperToModel(user);
+  }
+
   async findByEmail(email: string): Promise<UserModel | null> {
     const user = await database.user.findUnique({
       where: {

@@ -2,11 +2,13 @@
  * Types
  */
 import type { UserModel } from "../models/user.model";
-import type { CreateUserDTO } from "../controllers/auth.controller";
+import type { CreateUserDTO, UserSignedInDTO } from "../controllers/auth.controller";
 import type { CreatedTicket, CreateTicketDTO } from "../controllers/ticket.controller";
 
 export interface IAuthService {
   signUp(data: CreateUserDTO): Promise<UserModel | null>;
+  signIn(data: UserSignedInDTO): Promise<UserModel | null>;
+  me(userId: string): Promise<UserModel | null>;
 }
 
 export interface ITicketService {
@@ -14,10 +16,10 @@ export interface ITicketService {
 }
 
 export interface ITokenService {
-  generateToken(payload: object): string;
-  verifyToken(token: string): object | null;
-  generateRefreshToken(payload: object): string;
-  verifyRefreshToken(token: string): object | null;
+  generateToken(payload: { id: string; email: string }): string;
+  verifyToken(token: string): { id: string; email: string } | null;
+  generateRefreshToken(payload: { id: string; email: string }): string;
+  verifyRefreshToken(token: string): { id: string; email: string } | null;
   saveToken(userId: string, token: string): Promise<void>;
   getTokenByUserId(userId: string): Promise<string[] | null>;
   getToken(token: string): Promise<string | null>;

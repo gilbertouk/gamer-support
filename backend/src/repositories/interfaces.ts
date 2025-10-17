@@ -6,6 +6,7 @@ import type { UserModel } from "../models/user.model";
 
 export interface IUserRepository {
   create(data: CreateUserDTO): Promise<UserModel | null>;
+  findById(id: string): Promise<UserModel | null>;
   findByEmail(email: string): Promise<UserModel | null>;
   findByUsername(username: string): Promise<UserModel | null>;
 }

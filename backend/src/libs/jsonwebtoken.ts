@@ -13,8 +13,13 @@ import { config } from "../config";
 /*
  * Types
  */
-import type { JwtPayload, SignOptions } from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 import { ITokenRepository } from "../repositories/interfaces";
+
+interface JwtPayload {
+  id: string;
+  email: string;
+}
 
 export class TokenService implements ITokenService {
   private tokenRepository: ITokenRepository;
