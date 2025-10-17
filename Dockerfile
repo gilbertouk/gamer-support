@@ -69,5 +69,5 @@ EXPOSE 3000
 CMD \
   echo "🏗️  Executando migrations..." && \
   cd /app/backend && npx prisma migrate deploy && \
-  echo "🚀 Iniciando backend..." && node dist/index.js & \
+  echo "🚀 Iniciando backend..." && node dist/main.js & \
   echo "🎮 Iniciando frontend..." && cd /app/frontend && npm start
