@@ -20,4 +20,5 @@ export const config = {
     refreshExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "7d",
     issuer: process.env.TOKEN_ISSUER || "your-app-name",
   },
+  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
 };
