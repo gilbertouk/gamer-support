@@ -64,9 +64,8 @@ ENV NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 # =========================
 WORKDIR /app
 
-CMD "\
-  echo '🏗️  Executando migrations...' && \
+CMD \
+  echo "🏗️  Executando migrations..." && \
   cd /app/backend && npx prisma migrate deploy && \
-  echo '🚀 Iniciando backend...' && node dist/index.js & \
-  echo '🎮 Iniciando frontend...' && cd /app/frontend && npm start \
-"
+  echo "🚀 Iniciando backend..." && node dist/main.js & \
+  echo "🎮 Iniciando frontend..." && cd /app/frontend && npm start
