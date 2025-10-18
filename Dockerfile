@@ -1,20 +1,20 @@
 # =========================
 # Etapa 1: build do backend
 # =========================
-FROM node:20-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
 WORKDIR /app/backend
 
+# Copia e instala dependências (incluindo dev para build)
 COPY backend/package*.json ./
 RUN npm ci --include=dev
 
 COPY backend ./
 
-# Gera o Prisma Client antes de compilar
+# Gera Prisma Client (irá para node_modules/@prisma/client)
 RUN npx prisma generate
 
-# Agora sim compila o projeto
+# Build TypeScript
 RUN npm run build
-
 
 # =========================
 # Etapa 2: build do frontend
@@ -25,13 +25,13 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 
-# Copia o build do backend apenas para pegar o endereço base da API
 COPY frontend ./
 
-# Aqui configuramos a variável base da API apontando para o backend interno
+# Configura variável para backend interno
 ENV NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
-RUN npm run build
 
+# Build do Next.js
+RUN npm run build
 
 # =========================
 # Etapa 3: runtime final
@@ -39,35 +39,34 @@ RUN npm run build
 FROM node:22-alpine AS runner
 WORKDIR /app
 
-# Copia backend compilado
-# COPY --from=backend-builder /app/backend/dist ./backend/dist
-# COPY --from=backend-builder /app/backend/package*.json ./backend/
-# COPY --from=backend-builder /app/backend/prisma ./backend/prisma
-# Copia backend compilado e prisma client já gerado
-COPY --from=backend-builder /app/backend ./backend
+# Instala curl/wget para healthcheck
+RUN apk add --no-cache curl wget bash
 
-# Copia frontend compilado
+# Copia backend
+COPY --from=backend-builder /app/backend ./backend
+# Copia frontend build
 COPY --from=frontend-builder /app/frontend/.next ./frontend/.next
-COPY --from=frontend-builder /app/frontend/public ./frontend/public
 COPY --from=frontend-builder /app/frontend/package*.json ./frontend/
 
-# Instala dependências necessárias para produção
+# Instala apenas deps de produção
 RUN cd backend && npm ci --omit=dev && cd ../frontend && npm ci --omit=dev
 
-# =========================
-# Configuração final
-# =========================
-# Variáveis de ambiente (você também pode definir via Coolify)
+# Expõe apenas o frontend
+EXPOSE 3000
+
+# Variáveis de ambiente padrão (podem ser sobrescritas no Coolify)
 ENV NODE_ENV=production
 ENV PORT=5000
 ENV NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 
-# Expõe apenas o frontend (Next.js)
-EXPOSE 3000
+# =========================
+# CMD final: executa migrations e inicia backend + frontend
+# =========================
+WORKDIR /app
 
-# Executa migrations e inicia backend + frontend juntos
-CMD \
-  echo "🏗️  Executando migrations..." && \
+CMD bash -c "\
+  echo '🏗️  Executando migrations...' && \
   cd /app/backend && npx prisma migrate deploy && \
-  echo "🚀 Iniciando backend..." && node dist/main.js & \
-  echo "🎮 Iniciando frontend..." && cd /app/frontend && npm start
+  echo '🚀 Iniciando backend...' && node dist/index.js & \
+  echo '🎮 Iniciando frontend...' && cd /app/frontend && npm start \
+"
