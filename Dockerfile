@@ -40,7 +40,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Instala curl/wget para healthcheck
-RUN apk add --no-cache curl wget bash
+# RUN apk add --no-cache curl wget bash
 
 # Copia backend
 COPY --from=backend-builder /app/backend ./backend
