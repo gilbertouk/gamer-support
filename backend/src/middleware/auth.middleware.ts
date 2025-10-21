@@ -1,4 +1,9 @@
 /*
+ * Custom Module
+ */
+import { UnauthorizedError, ForbiddenError } from "../errors";
+
+/*
  * Types
  */
 import type { NextFunction, Request, Response } from "express";
@@ -23,7 +28,7 @@ export class AuthMiddleware {
   validateAuthHeader(req: Request): void {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new Error("Unauthorized");
+      throw new UnauthorizedError("Missing or invalid Authorization header");
     }
   }
 
@@ -37,12 +42,12 @@ export class AuthMiddleware {
         const payload = this.tokenService.verifyToken(token);
 
         if (!payload || typeof payload === "string" || !payload.id || !payload.email || !payload.role) {
-          throw new Error("Unauthorized");
+          throw new UnauthorizedError("Invalid token payload");
         }
 
         const user = await this.userRepository.findById(payload.id);
         if (!user) {
-          throw new Error("Unauthorized");
+          throw new UnauthorizedError("User not found");
         }
 
         // Attach user to request object
@@ -64,11 +69,11 @@ export class AuthMiddleware {
       const authenticatedReq = req as AuthenticatedRequest;
 
       if (!authenticatedReq.user) {
-        throw new Error("Unauthorized");
+        throw new UnauthorizedError("User not authenticated");
       }
 
       if (!allowedRoles.includes(authenticatedReq.user.role)) {
-        next(new Error("Forbidden"));
+        next(new ForbiddenError("User does not have permission"));
         return;
       }
 
