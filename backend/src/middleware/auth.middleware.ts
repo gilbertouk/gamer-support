@@ -42,7 +42,7 @@ export class AuthMiddleware {
         const payload = this.tokenService.verifyToken(token);
 
         if (!payload || typeof payload === "string" || !payload.id || !payload.email || !payload.role) {
-          throw new UnauthorizedError("Invalid token payload");
+          throw new UnauthorizedError("Invalid token");
         }
 
         const user = await this.userRepository.findById(payload.id);
