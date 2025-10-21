@@ -1,6 +1,7 @@
 /*
  * Custom Modules
  */
+import { ForbiddenError, NotFoundError } from "../errors";
 
 /*
  * Types
@@ -45,11 +46,11 @@ export class TicketService implements ITicketService {
   async delete(ticketId: string, userId: string): Promise<void> {
     const ticket = await this.ticketRepository.getById(ticketId);
     if (!ticket) {
-      throw new Error("Ticket not found");
+      throw new NotFoundError("Ticket not found");
     }
 
     if (ticket.getUserId() !== userId) {
-      throw new Error("Unauthorized");
+      throw new ForbiddenError("You do not have permission to delete this ticket");
     }
 
     await this.ticketRepository.delete(ticketId);
